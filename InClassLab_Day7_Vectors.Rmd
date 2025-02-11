@@ -2,7 +2,10 @@
 title: "In Class Lab"
 author: "Dr. Shoemaker"
 date: "DATA 2401"
-output: html_document
+output: 
+  html_document:
+    highlight: zenburn
+    theme: paper
 ---
 **Note: Your exam will be in a similar format to this (RMarkdown File with Questions and Code chunks for your answers), so make sure you have the process for knitting to html working.** 
 
@@ -15,36 +18,102 @@ knitr::opts_chunk$set(echo = TRUE)
 ### Set 1 
 
 1. Use the colon operator : to create a vector `n` of numbers from 10:49
+```{r}
+n <- 10:49
+n
+```
+
 2. Use the `length()` function to get the number of elements in `n`
+```{r}
+length(n)
+```
+
 3. Add 1 to each element in `n` and print the result
+```{r}
+n <- n + 1
+n
+```
+
 4. Create a vector `m` that contains the numbers 10 to 1 (in that order), in two different ways, neither of which is just typing "10, 9 , 8 ...".  Hint: use one of the helper functions we learned.
+```{r}
+m <- seq(10, 1, by = -2)
+m
+m <- seq(10, 1, by = -1.5)
+m
+```
+
 5. Subtract `m` FROM `n`. Note the recycling!
+```{r}
+m - n
+```
 
 ### Set 2 
 
 1. Use the `seq()` function to produce a range of numbers from -5 to 10 in `0.1` increments. Store it in a variable `x_range`
+```{r}
+x_range <- seq(-5, 10, by = 0.1)
+```
+
 2. Create a vector `sin_wave` by calling the `sin()` function on each element in `x_range`.
+```{r}
+sin_wave <- sin(x_range)
+```
+
 3. Use the `plot()` function to plot your "wave"!
      + the x vector goes in the first argument, the y vector goes in the second argument
      + You'll need to add the argument `type = "l"` for a line. NOTE: That is a lower case "L", not a 1. 
-
+```{r}
+plot(x_range, sin_wave, type = "l", col = "red")
+```
 
 ### Set 3 
 
 1. Use `:` to make a vector of the integers from 40 to 50 called `first_nums`
+```{r}
+first_nums <- 40:50
+```
+
 2. Use `seq()` to make a vector of the integers from 51 to 60 called `next_nums`
+```{r}
+next_nums <- seq(51:60)
+```
+
 3. Combine them using `c()`
+```{r}
+combined <- c(first_nums, next_nums)
+```
+
 4. Use indexing to access the 7th number in your combined vector
+```{r}
+combined[7]
+```
+
 5. Use indexing to access the 5th to the 8th numbers in your combined vector
-6. Use indexing to create a new vector that contains the first 3 elements and last 3 elements of your combined vector. 
+```{r}
+combined[5:8]
+```
+
+6. Use indexing to create a new vector that contains the first 3 elements and last 3 elements of your combined vector.
+```{r}
+first_last_3 <- combined[c(1:3, 19:21)]
+first_last_3
+```
+
 7. Bonus/extra: do the above in a way that would work no matter how long the vector is (as long as it's longer than 2 elements)
+```{r}
+any_length_first_last_3 <- combined[c(1:3, (length(combined) - 2):length(combined))]
+any_length_first_last_3
+```
 
 ## In Class Activity
 
 1. Write a function to simulate rolling a 6-sided die and returns the result.
 
 ```{r}
-
+roll_dice <- function() {
+  sample(1:6, size = 1)
+}
+roll_dice()
 ```
 
 
@@ -52,8 +121,10 @@ knitr::opts_chunk$set(echo = TRUE)
 1. Write a function to simulate rolling 2 6-sided dice that returns the sum of the rolls. 
 
 ```{r}
-
-
+roll_2_dice <- function() {
+  return(sum(sample(1:6, size = 2, replace = TRUE)))
+}
+roll_2_dice()
 ```
 
 
@@ -61,21 +132,113 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 # Your one-roll function goes here
+one_roll <- function(name1, name2) {
+  name1_roll <- sample(1:6, 1, replace = TRUE)
+  name2_roll <- sample(1:6, 1, replace = TRUE)
+  if (name1_roll > name2_roll) {
+    paste(name1, " rolled a ", name1_roll)
+  } else if (name2_roll > name1_roll) {
+    paste(name2, " rolled a ", name2_roll)
+  } else { # First Tie
+    print("1 draw occurred, rerolling once...")
+    name1_roll <- sample(1:6, 1, replace = TRUE)
+    name2_roll <- sample(1:6, 1, replace = TRUE)
+    if (name1_roll > name2_roll) {
+      paste(name1, " rolled a ", name1_roll)
+    } else if (name2_roll > name1_roll) {
+      paste(name2, " rolled a ", name2_roll)
+    } else { # Second Tie
+      print("draw")
+    }
+  }
+}
 
+one_roll("bill", "tom")
 ```
 
 
 2. Write a second function (you may start by modifying the first one) that takes two names as strings, simulates both of them rolling die 15 times, and returns the name of the person who "won" more rolls. Don't reroll ties this time, but don't count them as "wins". 
 
 ```{r}
+fifteen_rolls <- function(name1, name2) {
+  # Input Validation
+  if (!is.character(name1) || !is.character(name2)) {
+    stop("Both names must be strings!")
+  }
 
+  # Initialize Variables
+  name1_sum <- 0
+  name2_sum <- 0
+  count <- 0
 
+  # Loop till 15 rolls are completed
+  while (count < 15) {
+    name1_roll <- sample(1:6, 1, replace = TRUE)
+    name2_roll <- sample(1:6, 1, replace = TRUE)
+
+    if (name1_roll > name2_roll) {
+      name1_sum <- name1_sum + 1
+    } else if (name2_roll > name1_roll) {
+      name2_sum <- name2_sum + 1
+    }
+    # Print results of each roll along with rolling totals
+    count <- count + 1
+    print(paste("roll:", count))
+    print(paste(name1, ":", name1_roll, "Wins:", name1_sum))
+    print(paste(name2, ":", name2_roll, "Wins:", name2_sum))
+  }
+
+  # Display Winner
+  print("------------------------")
+  if (name1_sum > name2_sum) {
+    paste(name1, "won, with a total of", name1_sum, "wins.")
+  } else {
+    paste(name2, "won, with a total of", name2_sum, "wins.")
+  }
+}
+
+fifteen_rolls("Bill", "Tom")
 ```
 
 
 3. Modify your function from (2) so that the person in the first argument has a die that is weighted to get higher numbers more often (you may decide the actual percentage change). Run the function ten or so times. Does the second person ever win?
 
 ```{r}
-# Your "cheating" function goes here
-```
+fifteen_rolls <- function(name1, name2) {
+  # Input Validation
+  if (!is.character(name1) || !is.character(name2)) {
+    stop("Both names must be strings!")
+  }
 
+  # Initialize Variables
+  name1_sum <- 0
+  name2_sum <- 0
+  count <- 0
+
+  # Loop till 15 rolls are completed
+  while (count < 10) {
+    name1_roll <- sample(1:6, 1, prob = c(.1, .1, .1, .1, .1, .5), replace = TRUE)
+    name2_roll <- sample(1:6, 1, replace = TRUE)
+
+    # Update win counts
+    if (name1_roll > name2_roll) {
+      name1_sum <- name1_sum + 1
+    } else if (name2_roll > name1_roll) {
+      name2_sum <- name2_sum + 1
+    }
+
+    # Print results of each roll
+    count <- count + 1
+    print(paste("roll:", count))
+    print(paste(name1, ": ", name1_roll, "Wins:", name1_sum))
+    print(paste(name2, ": ", name2_roll, "Wins:", name2_sum))
+  }
+
+  # Display Winner
+  print("------------------------")
+  print(paste(name1, ":", name1_sum, "wins."))
+  print(paste(name2, ":", name2_sum, "wins."))
+}
+
+fifteen_rolls("Cheater", "Tom")
+```
